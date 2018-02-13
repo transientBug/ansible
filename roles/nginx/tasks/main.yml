@@ -10,6 +10,7 @@
   package:
     name: nginx
     state: present
+  notify: "Start nginx"
 
 - name: "Check for default site config"
   stat:
@@ -29,13 +30,4 @@
     mode: 0644
     owner: nginx
   with_items: "{{sites}}"
-
-- name: "Start NGINX"
-  service:
-    name: nginx
-    state: started
-
-- name: "Reload NGINX"
-  service:
-    name: nginx
-    state: reloaded
+  notify: "Reload nginx"
