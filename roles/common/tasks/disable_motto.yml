@@ -1,0 +1,30 @@
+---
+- group:
+    name: wheel
+    state: present
+
+- lineinfile:
+    dest: "{{ item }}"
+    state: absent
+    regexp: 'pam_motd.so.+motd='
+  with_items:
+    - /etc/pam.d/login
+    - /etc/pam.d/sshd
+
+- lineinfile:
+    dest: "{{ item }}"
+    state: absent
+    regexp: 'pam_motd.so.+noupdate'
+  with_items:
+    - /etc/pam.d/login
+    - /etc/pam.d/sshd
+
+- lineinfile:
+    dest: /etc/ssh/sshd_config
+    state: present
+    line: "PrintLastLog no"
+    regexp: 'PrintLastLog'
+
+- service:
+    name: ssh
+    state: restarted

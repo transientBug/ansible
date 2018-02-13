@@ -1,0 +1,13 @@
+---
+- include_tasks: create_user.yml
+  with_items: "{{users}}"
+
+- group:
+    name: wheel
+    state: present
+
+- lineinfile:
+    dest: /etc/sudoers
+    state: present
+    regexp: '^%wheel'
+    line: '%wheel ALL=(ALL) NOPASSWD: ALL'

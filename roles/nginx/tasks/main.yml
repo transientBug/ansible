@@ -1,0 +1,13 @@
+---
+- name: "Add Stable NGINX Repository"
+  apt_repository:
+    repo: "{{ item }}"
+  with_items:
+    - deb https://nginx.org/packages/{{ ansible_distribution|lower }}/ {{ ansible_distribution_release }} nginx
+    - deb-src https://nginx.org/packages/{{ ansible_distribution|lower }}/ {{ ansible_distribution_release }} nginx
+
+- name: "Install NGINX"
+  package:
+    name: nginx
+    state: present
+  notify: "Start NGINX"

@@ -353,6 +353,10 @@ class DigitalOceanInventory(object):
         if os.getenv("DO_API_KEY"):
             self.api_token = os.getenv("DO_API_KEY")
 
+        # Match the ENV I use for terraform
+        if os.getenv("DO_TOKEN"):
+            self.api_token = os.getenv("DO_TOKEN")
+
     def read_cli_args(self):
         """ Command line argument processing """
         parser = argparse.ArgumentParser(description='Produce an Ansible Inventory file based on DigitalOcean credentials')
@@ -472,11 +476,14 @@ class DigitalOceanInventory(object):
                         self.inventory[image] = {'hosts': [], 'vars': {}}
                     self.inventory[image]['hosts'].append(dest)
 
+            # Format the tags as tag_TAG so that its clear what you are
+            # referencing
             if droplet['tags']:
                 for tag in droplet['tags']:
-                    if tag not in self.inventory:
-                        self.inventory[tag] = {'hosts': [], 'vars': {}}
-                    self.inventory[tag]['hosts'].append(dest)
+                    formatted_tag = 'tag_' + tag
+                    if formatted_tag not in self.inventory:
+                        self.inventory[formatted_tag] = {'hosts': [], 'vars': {}}
+                    self.inventory[formatted_tag]['hosts'].append(dest)
 
             # hostvars
             info = self.do_namespace(droplet)

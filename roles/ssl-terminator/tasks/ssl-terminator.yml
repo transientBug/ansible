@@ -1,3 +1,0 @@
---
-- name: SSL Terminator
-  hosts: tag_ssl-terminator
