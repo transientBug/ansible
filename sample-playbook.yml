@@ -1,8 +1,0 @@
----
-- name: Sample
-  hosts: tag_ansible-managed
-  remote_user: root
-  tasks:
-    - raw: echo "Hi"
-      register: cat
-    - debug: var=cat.stdout_lines

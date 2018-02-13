@@ -3,8 +3,11 @@
   remote_user: root
 
   vars_files:
-    - roles/common/vars/users.yml
+    - vars/users.yml
+    - vars/ssl.yml
+    - vars/nginx.yml
 
   roles:
     - common
+    - letsencrypt
     - nginx

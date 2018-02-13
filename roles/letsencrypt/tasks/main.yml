@@ -1,0 +1,21 @@
+- get_url:
+    url: https://dl.eff.org/certbot-auto
+    dest: ./certbot-auto
+
+- file:
+    path: ./certbot-auto
+    mode: "a+x"
+
+- name: check if we've generated a cert already
+  stat: path=/etc/letsencrypt/live/{{ ssl_domain }}/fullchain.pem
+  register: cert_stats
+
+- name: generate certs (first time)
+  become: yes
+  shell: "/root/certbot-auto certonly --standalone {{ letsencrypt_domain_flags | join(' ') }} --email {{ letsencrypt_email}} --non-interactive --agree-tos"
+  when: cert_stats.stat.exists == False
+
+- name: generate certs (subsequent time)
+  become: yes
+  shell: "/root/certbot-auto certonly --webroot -w /usr/share/nginx/html {{ letsencrypt_domain_flags | join(' ') }} --email {{ letsencrypt_email}} --non-interactive --agree-tos"
+  when: cert_stats.stat.exists == True

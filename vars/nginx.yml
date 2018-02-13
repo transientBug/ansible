@@ -1,0 +1,25 @@
+---
+- sites:
+  - name: transientbug-staging
+    domains:
+      - staging.transientbug.ninja
+    ssl_domain: staging.transientbug.ninja
+    redirect_domain: staging.transientbug.ninja
+    redirects:
+      - staging.transientbug.net
+      - staging.transientbug.com
+    rules: |
+      root /var/www/bug/html;
+      index index.html;
+
+      location / {
+        try_files $uri $uri/ @proxy;
+      }
+
+      location = / {
+        proxy_pass http://127.0.0.1:8000;
+      }
+
+      location @proxy {
+        proxy_pass http://127.0.0.1:8000;
+      }
