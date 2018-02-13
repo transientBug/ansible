@@ -1,5 +1,5 @@
 ---
 - name: Sample
-  hosts: tag_ansible_managed
+  hosts: ansible-managed
   tasks:
     - raw: echo "Hi"
