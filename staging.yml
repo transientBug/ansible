@@ -8,8 +8,8 @@
     - vars/nginx.yml
 
   roles:
-    #- common
-    #- letsencrypt
-    #- nginx
-    #- docker
+    - common
+    - letsencrypt
+    - nginx
+    - docker
     - transientbug-docker
