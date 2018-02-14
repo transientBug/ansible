@@ -2,10 +2,6 @@
   get_url:
     url: https://dl.eff.org/certbot-auto
     dest: ./certbot-auto
-
-- name: "Chmod +x certbot-auto"
-  file:
-    path: ./certbot-auto
     mode: "a+x"
 
 - name: "Check if we've generated a cert already"
@@ -22,3 +18,17 @@
   shell: "/root/certbot-auto certonly --webroot -w /usr/share/nginx/html {{ letsencrypt_domain_flags | join(' ') }} --email {{ letsencrypt_email}} --non-interactive --agree-tos"
   notify: "Reload nginx"
   when: cert_stats.stat.exists == True
+
+- name: "Copy over renewal hook script"
+  copy:
+    src: ../files/letsencrypt-hook.sh
+    dest: ./letsencrypt-hook.sh
+    owner: root
+    mode: "a+x"
+
+- name: "Setup renewal cron job"
+  cron:
+    name: "LE renewal"
+    minute: "0"
+    hour: "*/12"
+    job: "/root/certbot-auto certonly --webroot -w /usr/share/nginx/html {{ letsencrypt_domain_flags | join(' ') }} --email {{ letsencrypt_email}} --non-interactive --agree-tos --renew-hook /root/letsencrypt-hook.sh"

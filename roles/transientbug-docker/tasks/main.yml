@@ -1,0 +1,59 @@
+---
+- name: "Check if we're a new install"
+  stat: path=/opt/transientbug/
+  register: repo_stats
+
+- name: "Fetching transientBug repo"
+  git:
+    repo: https://github.com/transientBug/transientbug-rails.git
+    dest: /opt/transientbug/
+
+- name: "Make a deploy copy of the docker-compose file"
+  copy:
+    src: /opt/transientbug/docker-compose.yml
+    dest: /opt/transientbug/docker-compose.deploy.yml
+    remote_src: yes
+
+- name: "Updating dropzone to volume"
+  replace:
+    path: /opt/transientbug/docker-compose.deploy.yml
+    regexp: '(\s+\-\s\")./storage(:.*)?$'
+    replace: '\1/mnt/staging-store\2'
+    after: 'volumes:*'
+
+- name: "Template the environment variables"
+  template:
+    src: ../templates/env.j2
+    dest: /opt/transientbug/.env.production
+
+- name: "Building new docker-compose stack"
+  command: docker-compose -f docker-compose.deploy.yml build
+  args:
+    chdir: /opt/transientbug/
+
+- name: "Setting up the database"
+  command: docker-compose -f docker-compose.deploy.yml run rails bundle exec rake db:setup
+  args:
+    chdir: /opt/transientbug/
+  when: repo_stats.stat.exists == False
+
+- name: "Migrating the database"
+  command: docker-compose -f docker-compose.deploy.yml run rails bundle exec rake db:migrate
+  args:
+    chdir: /opt/transientbug/
+  when: repo_stats.stat.exists == True
+
+#- name: "Building new docker-compose stack"
+#  command: docker-compose -f docker-compose.deploy.yml run rails bundle exec rake assets:precompile
+#  args:
+#    chdir: /opt/transientbug/
+
+- name: "Tearing down old stack"
+  command: docker-compose -f docker-compose.deploy.yml down
+  args:
+    chdir: /opt/transientbug/
+
+- name: "Bring new stack up"
+  command: docker-compose -f docker-compose.deploy.yml up -d
+  args:
+    chdir: /opt/transientbug/

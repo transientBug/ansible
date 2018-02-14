@@ -1,5 +1,5 @@
 ---
-- hosts: tag_ansible-managed:&tag_staging:&tag_ssl-terminator
+- hosts: tag_ansible-managed:&tag_staging:&tag_ssl-terminator:&tag_docker-host
   remote_user: root
 
   vars_files:
@@ -8,6 +8,8 @@
     - vars/nginx.yml
 
   roles:
-    - common
-    - letsencrypt
-    - nginx
+    #- common
+    #- letsencrypt
+    #- nginx
+    #- docker
+    - transientbug-docker

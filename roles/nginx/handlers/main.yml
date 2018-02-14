@@ -1,10 +1,10 @@
 ---
-- name: "Start NGINX"
+- name: "Start nginx"
   service:
     name: nginx
     state: started
 
-- name: "Reload NGINX"
+- name: "Reload nginx"
   service:
     name: nginx
     state: reloaded

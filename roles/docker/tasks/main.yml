@@ -1,0 +1,29 @@
+---
+- name: "Install Docker support"
+  apt:
+    name: "{{item}}"
+  with_items:
+    - apt-transport-https
+    - ca-certificates
+    - software-properties-common
+
+- name: "Fetching Dockers Repo key"
+  apt_key:
+    url: https://download.docker.com/linux/{{ ansible_distribution|lower }}/gpg
+    state: present
+
+- name: "Adding Docker repo"
+  apt_repository:
+    repo: deb https://download.docker.com/linux/{{ ansible_distribution|lower }} {{ ansible_distribution_release }} stable
+
+- apt:
+    update_cache: yes
+
+- name: "Install Docker CE"
+  apt:
+    name: docker-ce
+
+- get_url:
+    url: https://github.com/docker/compose/releases/download/1.19.0/docker-compose-Linux-x86_64
+    dest: /usr/local/bin/docker-compose
+    mode: "a+x"
