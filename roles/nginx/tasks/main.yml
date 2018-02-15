@@ -6,6 +6,12 @@
     - deb https://nginx.org/packages/{{ ansible_distribution|lower }}/ {{ ansible_distribution_release }} nginx
     - deb-src https://nginx.org/packages/{{ ansible_distribution|lower }}/ {{ ansible_distribution_release }} nginx
 
+- apt_key:
+    url: https://nginx.org/keys/nginx_signing.key
+
+- apt:
+    update_cache: yes
+
 - name: "Install NGINX"
   package:
     name: nginx
