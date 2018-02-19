@@ -1,0 +1,47 @@
+---
+- users:
+  - name: ashby
+    password: '$2y$10$G5hmiWAdGiOINyLAas4A5.Z7Fr3ttnKK0MVEQQO9MGpFNcQ71qNQy'
+    shell: /bin/bash
+    group: ashby
+    groups:
+      - users
+      - sudo
+      - wheel
+    pubkeys_url: http://github.com/joshashby.keys
+
+- storage:
+    mount: /mnt/production-storage
+
+- ssl_domain: transientbug.ninja
+- letsencrypt_domain_flags: []
+- letsencrypt_email: "production-ssl@transientbug.ninja"
+- letsencrypt_domain_flags:
+  - -d transientbug.ninja
+
+- sites:
+  - name: transientbug-production
+    ssl_domain: transienbug.ninja
+
+    domains:
+      - transientbug.ninja
+
+    redirect_domain: transientbug.ninja
+    redirects:
+      - transientbug.net
+      - transientbug.com
+
+    root: /opt/transientbug/public/
+
+    rules: |
+      location / {
+        try_files $uri $uri/ @proxy;
+      }
+
+      location = / {
+        proxy_pass http://127.0.0.1:8000;
+      }
+
+      location @proxy {
+        proxy_pass http://127.0.0.1:8000;
+      }

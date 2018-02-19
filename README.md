@@ -18,3 +18,9 @@ $ ansible-playbook staging.yml
 ```
 $ bin/digital_ocean.py --list | jq 'keys'
 ```
+
+```
+tar -zxvf dropzone_backup_staging-2018-02-19.tar.gz
+mv storage/* /mnt/production-storage/
+cat postgres_backup_staging-2018-02-19.sql | docker exec -i transientbug_postgres_1 psql -U transientbug -d transientbug_production
+```

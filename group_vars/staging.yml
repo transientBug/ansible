@@ -1,0 +1,47 @@
+---
+- users:
+  - name: ashby
+    password: '$2y$10$G5hmiWAdGiOINyLAas4A5.Z7Fr3ttnKK0MVEQQO9MGpFNcQ71qNQy'
+    shell: /bin/bash
+    group: ashby
+    groups:
+      - users
+      - sudo
+      - wheel
+    pubkeys_url: http://github.com/joshashby.keys
+
+- storage:
+    mount: /mnt/staging-storage
+
+- ssl_domain: staging.transientbug.ninja
+- letsencrypt_domain_flags: []
+- letsencrypt_email: "staging@transientbug.ninja"
+- letsencrypt_domain_flags:
+  - -d staging.transientbug.ninja
+
+- sites:
+  - name: transientbug-staging
+    ssl_domain: staging.transienbug.ninja
+
+    domains:
+      - staging.transientbug.ninja
+
+    redirect_domain: staging.transientbug.ninja
+    redirects:
+      - staging.transientbug.net
+      - staging.transientbug.com
+
+    root: /opt/transientbug/public/
+
+    rules: |
+      location / {
+        try_files $uri $uri/ @proxy;
+      }
+
+      location = / {
+        proxy_pass http://127.0.0.1:8000;
+      }
+
+      location @proxy {
+        proxy_pass http://127.0.0.1:8000;
+      }

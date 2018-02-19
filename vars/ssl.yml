@@ -1,6 +1,0 @@
----
-- ssl_domain: staging.transientbug.ninja
-- letsencrypt_domain_flags: []
-- letsencrypt_email: "staging@transientbug.ninja"
-- letsencrypt_domain_flags:
-  - -d staging.transientbug.ninja

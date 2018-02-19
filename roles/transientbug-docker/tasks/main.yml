@@ -1,4 +1,10 @@
 ---
+- name: "Set the vm.max_map_count higher for ES"
+  sysctl:
+    name: vm.max_map_count
+    value: 262144
+    state: present
+
 - name: "Check if we're a new install"
   stat: path=/opt/transientbug/
   register: repo_stats
@@ -8,18 +14,11 @@
     repo: https://github.com/transientBug/transientbug-rails.git
     dest: /opt/transientbug/
 
-- name: "Make a deploy copy of the docker-compose file"
-  copy:
-    src: /opt/transientbug/docker-compose.yml
-    dest: /opt/transientbug/docker-compose.deploy.yml
-    remote_src: yes
-
-- name: "Updating dropzone to volume"
-  replace:
-    path: /opt/transientbug/docker-compose.deploy.yml
-    regexp: '(\s+\-\s\")./storage(:.*)?$'
-    replace: '\1/mnt/staging-store\2'
-    after: 'volumes:*'
+- name: "Ensuring storage is linked"
+  file:
+    src: "{{storage.mount}}"
+    dest: "/opt/transientbug/storage/"
+    state: link
 
 - name: "Template the environment variables"
   template:

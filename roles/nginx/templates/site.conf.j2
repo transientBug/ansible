@@ -12,7 +12,7 @@ server {
   {% if item.ssl_domain %}
   return 301 https://$host$request_uri;
   {% else %}
-  root /usr/share/nginx/html;
+  root {{item.root}};
   index index.html;
 
   {{ item.rules }}
