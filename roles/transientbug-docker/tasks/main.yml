@@ -16,9 +16,10 @@
 
 - name: "Ensuring storage is linked"
   file:
+    dest: "/opt/transientbug/storage"
     src: "{{storage.mount}}"
-    dest: "/opt/transientbug/storage/"
     state: link
+    force: true
 
 - name: "Template the environment variables"
   template:
@@ -26,33 +27,33 @@
     dest: /opt/transientbug/.env.production
 
 - name: "Building new docker-compose stack"
-  command: docker-compose -f docker-compose.deploy.yml build
+  command: docker-compose build
   args:
     chdir: /opt/transientbug/
 
 - name: "Setting up the database"
-  command: docker-compose -f docker-compose.deploy.yml run rails bundle exec rake db:setup
+  command: docker-compose run rails bundle exec rake db:setup
   args:
     chdir: /opt/transientbug/
   when: repo_stats.stat.exists == False
 
 - name: "Migrating the database"
-  command: docker-compose -f docker-compose.deploy.yml run rails bundle exec rake db:migrate
+  command: docker-compose run rails bundle exec rake db:migrate
   args:
     chdir: /opt/transientbug/
   when: repo_stats.stat.exists == True
 
 #- name: "Building new docker-compose stack"
-#  command: docker-compose -f docker-compose.deploy.yml run rails bundle exec rake assets:precompile
+#  command: docker-compose run rails bundle exec rake assets:precompile
 #  args:
 #    chdir: /opt/transientbug/
 
 - name: "Tearing down old stack"
-  command: docker-compose -f docker-compose.deploy.yml down
+  command: docker-compose down
   args:
     chdir: /opt/transientbug/
 
 - name: "Bring new stack up"
-  command: docker-compose -f docker-compose.deploy.yml up -d
+  command: docker-compose up -d
   args:
     chdir: /opt/transientbug/

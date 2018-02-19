@@ -11,7 +11,7 @@
     pubkeys_url: http://github.com/joshashby.keys
 
 - storage:
-    mount: /mnt/production-storage
+    mount: /mnt/storage-production
 
 - sites:
   - name: transientbug-production
