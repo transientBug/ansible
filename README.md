@@ -19,8 +19,25 @@ $ ansible-playbook staging.yml
 $ bin/digital_ocean.py --list | jq 'keys'
 ```
 
+
+# Super Manual Prod Migration
+##Old Host:
+
 ```
-tar -zxvf dropzone_backup_staging-2018-02-19.tar.gz
+docker exec transientbugrails_postgres_1 pg_dump -U transientbug --create transientbug_production > postgres_backup_staging-<date>.sql
+tar -zcvf dropzone_backup_staging-<date>.tar.gz storage
+```
+
+`scp` data over from old host to the new host
+
+## New Host:
+
+```
+cd /opt/transientbug/
+tar -zxvf dropzone_backup_staging-<date>.tar.gz
 mv storage/* /mnt/production-storage/
-cat postgres_backup_staging-2018-02-19.sql | docker exec -i transientbug_postgres_1 psql -U transientbug -d transientbug_production
+docker-compose down
+docker volume prune
+docker-compose up -d
+cat postgres_backup_staging-<date>.sql | docker exec -i transientbug_postgres_1 psql -U transientbug
 ```
