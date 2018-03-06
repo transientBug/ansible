@@ -21,7 +21,7 @@
 
 - sites:
   - name: transientbug-production
-    ssl_domain: transienbug.ninja
+    ssl_domain: transientbug.ninja
 
     domains:
       - transientbug.ninja
