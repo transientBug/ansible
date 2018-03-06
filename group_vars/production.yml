@@ -18,6 +18,8 @@
 - letsencrypt_email: "production-ssl@transientbug.ninja"
 - letsencrypt_domain_flags:
   - -d transientbug.ninja
+  - -d transientbug.net
+  - -d transientbug.com
 
 - sites:
   - name: transientbug-production
