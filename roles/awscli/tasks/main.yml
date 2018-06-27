@@ -1,0 +1,21 @@
+---
+- name: "check for awscli"
+  stat: path=/usr/local/bin/aws
+  register: awscli_stats
+
+- name: "fetch awscli"
+  get_url:
+    url: https://s3.amazonaws.com/aws-cli/awscli-bundle.zip
+    dest: awscli-bundle.zip
+    mode: "a"
+  when: awscli_stats.stat.exists == False
+
+- name: "unbundle"
+  unarchive:
+    src: awscli-bundle.zip
+    dest: ./awscli-bundle
+  when: awscli_stats.stat.exists == False
+
+- name: "install"
+  shell: ./awscli-bundle/install -b /usr/local/bin/aws
+  when: awscli_stats.stat.exists == False
