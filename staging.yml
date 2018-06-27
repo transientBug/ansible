@@ -10,4 +10,5 @@
     - letsencrypt
     - nginx
     - docker
+    - awscli
     - transientbug-docker

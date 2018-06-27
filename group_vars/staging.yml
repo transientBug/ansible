@@ -21,7 +21,7 @@
 
 - sites:
   - name: transientbug-staging
-    ssl_domain: staging.transienbug.ninja
+    ssl_domain: staging.transientbug.ninja
 
     domains:
       - staging.transientbug.ninja

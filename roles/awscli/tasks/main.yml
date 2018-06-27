@@ -1,0 +1,24 @@
+---
+- name: "Install unzip"
+  package:
+    name: unzip
+    state: present
+
+- name: "fetch awscli"
+  get_url:
+    url: https://s3.amazonaws.com/aws-cli/awscli-bundle.zip
+    dest: ./awscli-bundle.zip
+    mode: "a"
+    checksum: sha256:c85cee1fe91fb8ea2cbc88c506813fbcdf02f873da749e685dceb5ebeba65113
+  register: awscli_stats
+
+- name: "unbundle"
+  unarchive:
+    remote_src: true
+    src: awscli-bundle.zip
+    dest: ./
+  when: awscli_stats.changed == True
+
+- name: "install"
+  shell: ./awscli-bundle/install -b /usr/local/bin/aws
+  when: awscli_stats.changed == True
