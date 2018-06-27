@@ -34,6 +34,7 @@
 
 - name: "Unpacking compiled package"
   unarchive:
+    remote_src: true
     src: current_package.tar.gz
     dest: ./
 
