@@ -27,7 +27,7 @@
     dest: /opt/transientbug/.env.production
 
 - name: "Downloading compiled package"
-  command: aws s3 cp s3://transientbug-assets/current_package.tar.gz . --endpoint-url https://nyc3.digitaloceanspaces.com
+  command: aws s3 cp s3://transientbug-assets/current_package.tar.gz /opt/transientbug/ --endpoint-url https://nyc3.digitaloceanspaces.com
   environment:
     AWS_ACCESS_KEY_ID: "{{ lookup('env', 'AWS_ACCESS_KEY_ID') }}"
     AWS_SECRET_ACCESS_KEY: "{{ lookup('env', 'AWS_SECRET_ACCESS_KEY') }}"
@@ -35,8 +35,8 @@
 - name: "Unpacking compiled package"
   unarchive:
     remote_src: true
-    src: current_package.tar.gz
-    dest: ./
+    src: /opt/transientbug/current_package.tar.gz
+    dest: /opt/transientbug/
 
 - name: "Building new docker-compose stack"
   command: docker-compose build
