@@ -32,11 +32,22 @@
     AWS_ACCESS_KEY_ID: "{{ lookup('env', 'AWS_ACCESS_KEY_ID') }}"
     AWS_SECRET_ACCESS_KEY: "{{ lookup('env', 'AWS_SECRET_ACCESS_KEY') }}"
 
+- name: "Cleaning up public/"
+  file:
+    path: /opt/transientbug/public/
+    state: absent
+
 - name: "Unpacking compiled package"
   unarchive:
     remote_src: true
     src: /opt/transientbug/current_package.tar.gz
     dest: /opt/transientbug/
+
+- name: "Logging into GitHub docker registry"
+  command: docker login docker.pkg.github.com --username $DOCKER_USERNAME --password $DOCKER_PASSWORD
+  environment:
+    DOCKER_USERNAME: "{{ lookup('env', 'DOCKER_USERNAME') }}"
+    DOCKER_PASSWORD: "{{ lookup('env', 'DOCKER_PASSWORD') }}"
 
 - name: "Building new docker-compose stack"
   command: docker-compose build
